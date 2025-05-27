@@ -1,4 +1,5 @@
 How to use:
+<br>
 Step 1: change the half angle type in line 68 (1=no half angle, 2=45.005, 3=normal half angle, 4=large half angle)
 Step 2: change the airtime in mm, air time in jump, block mm in line 71
 Step 3: Run
