@@ -76,6 +76,7 @@ public class BmSolverA2 {
     }
 
     //1:原版45，2:45.006，3:原版小半角，4:原版大半角
+    //referenced from pjx's half angle calculator, thanks!
     public static void sinMaker(int type){
         switch (type) {
             case 1:
