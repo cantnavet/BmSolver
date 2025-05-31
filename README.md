@@ -2,9 +2,9 @@
 <br>
 Step 1: Run the java code
 <br>
-Step 2: Change the half angle type (1=no half angle, 2=45.005, 3=normal half angle, 4=large half angle)
+Step 2: Input the half angle type (1=no half angle, 2=45.005, 3=normal half angle, 4=large half angle)
 <br>
-Step 3: Change the airtime in mm, air time in jump, block mm
+Step 3: Input the airtime in mm, air time in jump, block mm
 <br>
 Step 4: Click the "计算" button
 <br>
