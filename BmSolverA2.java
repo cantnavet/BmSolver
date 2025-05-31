@@ -530,7 +530,7 @@ public class BmSolverA2 {
             }
         }
         
-        System.out.println("容错: "+jpb);
+        System.out.println("容错: "+pb);
         System.out.println("跳跃距离: "+distance);
     }
 
