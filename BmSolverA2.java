@@ -64,19 +64,17 @@ public class BmSolverA2 {
 
     public static void main(String[] args) {
 
-        //1:原版45，2:45.006，3:原版小半角，4:原版大半角
-        sinMaker(1);
+        //1:原版45，2:45.006，3:原版小半角，4:原版大半角，5:optifine大半角
+        sinMaker(2);
 
         //正片
-        single(12,22,12.3125);
+        single(2,12,2.1875);
 
         //finaljump(delayedJumps(bm, -0.429326), false);
         ////System.out.println("distance "+distance+" pb "+pb);
 
     }
 
-    //1:原版45，2:45.006，3:原版小半角，4:原版大半角
-    //referenced from pjx's half angle calculator, thanks!
     public static void sinMaker(int type){
         switch (type) {
             case 1:
@@ -94,6 +92,10 @@ public class BmSolverA2 {
             case 4:
                 sin = 0.70710677f;
                 cos = 0.7114322f;
+                break;
+            case 5:
+                sin = 0.8310432f;
+                cos = 0.70764905f;
                 break;
             default:
                 break;
@@ -419,7 +421,7 @@ public class BmSolverA2 {
             }
 
             ////System.out.println(s0+" "+DeBwSpeed);
-            if ((pres0 == s0 && prebm2 == bm2)) {
+            if ((pres0 == s0 && prebm2 == bm2)||deloops>100) {
                 break;
             }
             
@@ -552,8 +554,6 @@ public class BmSolverA2 {
         System.out.println("跳跃距离: "+distance);
     }
 
-
-    //input bm, sn, output sn+1, 但最后起跳不delayed
     public static double delayedJumps(double bmGoal, double s0) {
         double fbm = delayedJumpJumps(s0,-1,false);
         double sbm = delayedJumpJumps(s0,1,false);
@@ -662,10 +662,10 @@ public class BmSolverA2 {
         delayedJumpJumps(s0,finJs,true);
         //System.out.println("run: "+tempBM +" finbm  "+finJs);
 
-        //System.out.println("----test----");
-        delayedJumpJumps(s0,0,true);
-        //System.out.println(tempBM);
-        //System.out.println("----test----");
+        // //System.out.println("----test----");
+        // delayedJumpJumps(s0,0,true);
+        // //System.out.println(tempBM);
+        // //System.out.println("----test----");
 
         double js = finJs;
         int plan = 0;
