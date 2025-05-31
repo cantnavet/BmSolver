@@ -67,7 +67,7 @@ public class BmSolverA2 {
         //1:原版45，2:45.006，3:原版小半角，4:原版大半角，5:optifine大半角
         sinMaker(2);
 
-        //正片
+        //输入格式：助跑滞空时间(gt)，跳跃滞空时间(gt)，助跑长度(block)
         single(2,12,2.1875);
 
         //finaljump(delayedJumps(bm, -0.429326), false);
@@ -386,7 +386,6 @@ public class BmSolverA2 {
             //System.out.println("s0: "+s0+" sbm: "+backSpeedToFront(s0,false));
             ////System.out.println("s0: "+-0.01+" sbm: "+backSpeedToFront(-0.01,false));
             if (backSpeedToFront(s0,false)>=bm) {
-                //System.out.println("连跳已经可以用满助跑，无需再获得更高bwmm速度了");
                 double t1 = backToFrontUnit(-1,false);
                 double t2 = backToFrontUnit(1,false);
                 ////System.out.println("s0 "+s0+" bs0 "+backSpeedToFront(s0,false));
@@ -419,8 +418,7 @@ public class BmSolverA2 {
                     landSpeed = tLandSpeed;
                 }
             }
-
-            ////System.out.println(s0+" "+DeBwSpeed);
+            
             if ((pres0 == s0 && prebm2 == bm2)||deloops>100) {
                 break;
             }
@@ -477,6 +475,8 @@ public class BmSolverA2 {
             s0 = ts0;
         }   
 
+        // 如果d1比d12难时触发(x
+        // 其实是判断起跳时跑1t是否有优势的其中一部分
         if (d1>d12) {
             delayedG = false;
             if (s0<BwSpeed) {
@@ -490,6 +490,8 @@ public class BmSolverA2 {
                 jpb = prepb;
             }
         }
+        
+        // 在可以让数次全速连跳完美铺满助跑时触发
         if(justJump != 0){
             ////System.out.println("is j");
             finaljump(justJump, delayedG2);
@@ -505,6 +507,7 @@ public class BmSolverA2 {
             distance = d1;
             pb = prepb;
         }
+        // 比较后跳与跑跳之间的距离
         if (distance < rd0 || distance < rdd0) {
             // //System.out.println(rd0+" instant jump");
             // //System.out.println(rdd0+" delayed jump");
@@ -524,32 +527,9 @@ public class BmSolverA2 {
                 delayedG = true;
                 landSpeed = rds0;
                 finalv0 = rdjs0;
-                //System.out.println("起跳时跑的跑nt跳法更优，跳法种类: "+rrunType);
             }
         }
         
-        
-        // ////System.out.println(tempBM);
-        // ////System.out.println(tempV0);
-        // if (pb != jpb && justJump==0) {
-        //     //System.out.println("BMlooped: "+(delayedG?deloops:loops)+", max BWspeed: "+s0+", noDelayv0: "+finalv0 +", Maxpb: "+pb);
-        // }else if(justJump==0){
-        //     //System.out.println("BMloop times: "+(delayedG?deloops:loops)+", speed: "+(delayedG?DeBwSpeed:BwSpeed)+", noDelayv0: "+finalv0  + ", Maxpb: "+pb);
-        // }else if(!(distance == rd0 || distance == rdd0)){
-        //     //System.out.println("BMloop times: "+(delayedG?deloops:loops)+", landspeed: "+landSpeed+", noDelayv0: "+finalv0  + ", Maxpb: "+pb);
-        // }else{
-        //     //System.out.println("runSpeed: "+landSpeed+", startv0: "+finalv0  + ", Maxpb: "+pb);
-        // }
-        // //System.out.println("PB: "+jpb + ", MAXdistance: "+distance + ", loops~"+((delayedG?deloops:loops)!=0?(jloops+(jpb==114514?0:1)):0)+", delayed?"+delayedG);
-        // if (delayedG && rbwmmPlan>-1) {
-        //     //System.out.println("bwmm plan: "+rbwmmPlan);
-        // }else if(!delayedG && bwmmPlan>-1){
-        //     //System.out.println("bwmm plan: "+bwmmPlan);
-        // }
-        // //System.out.println(dne);
-        // // //System.out.println((double)(float)0.005494505);
-        
-        // // //System.out.println(backSpeedToFront(-5));
         System.out.println("容错: "+jpb);
         System.out.println("跳跃距离: "+distance);
     }
@@ -657,15 +637,8 @@ public class BmSolverA2 {
     public static double delayedDelayJumps(double bmGoal, double s0) {
         double fbm = delayedJumpJumps(s0,-1,true);
         double sbm = delayedJumpJumps(s0,1,true);
-        //System.out.println("fbm: "+fbm+" sbm: "+sbm);
         double finJs = 2*((bm-fbm)/(sbm-fbm))-1;
         delayedJumpJumps(s0,finJs,true);
-        //System.out.println("run: "+tempBM +" finbm  "+finJs);
-
-        // //System.out.println("----test----");
-        // delayedJumpJumps(s0,0,true);
-        // //System.out.println(tempBM);
-        // //System.out.println("----test----");
 
         double js = finJs;
         int plan = 0;
