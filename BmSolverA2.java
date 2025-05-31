@@ -1,4 +1,9 @@
 import java.util.Arrays;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 
 public class BmSolverA2 {
     public static double coord2;
@@ -62,16 +67,78 @@ public class BmSolverA2 {
     public static float sin = 0.70710677f;
     public static float cos = 0.70710677f;
 
+    private static JTextArea resultArea;
+
     public static void main(String[] args) {
 
-        //1:原版45，2:45.006，3:原版小半角，4:原版大半角，5:optifine大半角
-        sinMaker(2);
+        JFrame frame = new JFrame("跳跃计算器");
+        frame.setLayout(new BorderLayout(10, 10));
 
-        //输入格式：助跑滞空时间(gt)，跳跃滞空时间(gt)，助跑长度(block)
-        single(2,12,2.1875);
+        // 输入面板
+        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        
+        JLabel typeLabel = new JLabel("角度类型 (1:45 2:45.006 3:小半角 4:大半角):");
+        JTextField typeField = new JTextField();
+        inputPanel.add(typeLabel);
+        inputPanel.add(typeField);
 
-        //finaljump(delayedJumps(bm, -0.429326), false);
-        ////System.out.println("distance "+distance+" pb "+pb);
+        JLabel runLabel = new JLabel("助跑滞空时间 (gt):");
+        JTextField runField = new JTextField();
+        inputPanel.add(runLabel);
+        inputPanel.add(runField);
+
+        JLabel jumpLabel = new JLabel("跳跃滞空时间 (gt):");
+        JTextField jumpField = new JTextField();
+        inputPanel.add(jumpLabel);
+        inputPanel.add(jumpField);
+
+        JLabel lengthLabel = new JLabel("助跑长度 (block):");
+        JTextField lengthField = new JTextField();
+        inputPanel.add(lengthLabel);
+        inputPanel.add(lengthField);
+
+        // 结果面板
+        resultArea = new JTextArea(5, 30);
+        resultArea.setEditable(false);
+        JScrollPane resultScroll = new JScrollPane(resultArea);
+
+        // 操作按钮
+        JButton calcButton = new JButton("计算");
+        calcButton.addActionListener(e -> {
+            try {
+                int type = Integer.parseInt(typeField.getText());
+                int runTime = Integer.parseInt(runField.getText());
+                int jumpTime = Integer.parseInt(jumpField.getText());
+                double length = Double.parseDouble(lengthField.getText());
+
+                sinMaker(type);
+                String[] results = single(runTime, jumpTime, length);
+                
+                resultArea.setText("");
+                for (String result : results) {
+                    resultArea.append(result + "\n");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, "输入格式错误", "错误", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // 组装界面
+        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(resultScroll, BorderLayout.CENTER);
+        frame.add(calcButton, BorderLayout.SOUTH);
+
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        // //1:原版45，2:45.006，3:原版小半角，4:原版大半角
+        // sinMaker(2);
+
+        // //输入格式：助跑滞空时间(gt)，跳跃滞空时间(gt)，助跑长度(block)
+        // single(12,6,0.375);
+
+        // //finaljump(delayedJumps(bm, -0.429326), false);
+        // ////System.out.println("distance "+distance+" pb "+pb);
 
     }
 
@@ -93,10 +160,6 @@ public class BmSolverA2 {
                 sin = 0.70710677f;
                 cos = 0.7114322f;
                 break;
-            case 5:
-                sin = 0.8310432f;
-                cos = 0.70764905f;
-                break;
             default:
                 break;
         }
@@ -109,13 +172,65 @@ public class BmSolverA2 {
             RunEqualv0 = (RunEqualv0 - (RunEqualv0* (float)(0.54600006) + (float)((float)(0.09192386) * (float)(sin) + (float)(0.09192386) * (float)(cos))))/2;
     }
 
-    public static void single(int bmt, int jt, double bms) {
+    public static String[] single(int bmt, int jt, double bms) {
 
         int bmTick = bmt;    //助跑上的airtime
         int jumpTick = jt;   //跳跃的airtime
         bm = bms;            //bm   
 
+         coord2 = 0.0;
+        loops = 0;    
+        deloops = 0;  
+        jloops = 0;   
+        ti = null;
+    
+        pb = 0.0;
+        jpb = 0.0;   
+        distance = 0.0;
+        finv0 = 0.0;
+        inPlace = 0;
+        inFix = 0;
+        fixPlan = 0;
+        planSteps = 0;
+        fixSpeed = 0.0;
+        maxFixSpeed = 0.0;
+        landSpeed = 0.0;
         
+        tempBM = 0.0;
+        tempV0 = 0.0;
+        injs = 0.0;
+        starts0 = 0.0;
+        dne = false;
+    
+        infill = false;
+        defill = false;
+        inspeed = 0.0;
+    
+        //bwmm 移动阻断 part
+        bwmmPlan = -1; // 保持初始值
+        rbwmmPlan = -1;// 保持初始值
+        sinDPB = -1;   // 保持初始值
+        sinDd0 = 0.0;
+        sinDs0 = 0.0;
+        sinDjs0 = 0.0;
+    
+        sinPB = -1;    // 保持初始值
+        sind0 = 0.0;
+        sins0 = 0.0;
+        sinjs0 = 0.0;
+    
+        //run1t part
+        rs0 = 0.0;
+        rjs0 = 0.0;
+        rd0 = 0.0;
+        rpb = 0.0;
+        runType = 0;
+    
+        rds0 = 0.0;
+        rdjs0 = 0.0;
+        rdd0 = 0.0;
+        rdpb = 0.0;
+        rrunType = 0;
         
         starts0 = 0;        //初始速度，正常不需要填
         coord2 = 0;         //起始坐标，需要高精度时填
@@ -497,6 +612,7 @@ public class BmSolverA2 {
             finaljump(justJump, delayedG2);
             if (d1<distance || delayedG == delayedG2) {
                 jpb = pb;
+                delayedG = delayedG2;
                 // //System.out.println("Speed included all mm");
             }else{
                 distance = d1;
@@ -507,8 +623,11 @@ public class BmSolverA2 {
             distance = d1;
             pb = prepb;
         }
+
+        String rOrJ = "推荐使用后跳";
         // 比较后跳与跑跳之间的距离
         if (distance < rd0 || distance < rdd0) {
+            rOrJ = "推荐使用跑跳";
             // //System.out.println(rd0+" instant jump");
             // //System.out.println(rdd0+" delayed jump");
             if (rd0>rdd0) {
@@ -530,8 +649,12 @@ public class BmSolverA2 {
             }
         }
         
-        System.out.println("容错: "+pb);
-        System.out.println("跳跃距离: "+distance);
+        String rr = delayedG?"起跳时跑1t":"起跳时无需跑1t";
+        String[] res = {"容错: "+pb,"跳跃距离: "+distance,rOrJ,rr};
+        
+
+
+        return res;
     }
 
     public static double delayedJumps(double bmGoal, double s0) {
