@@ -24,6 +24,8 @@ public class BmSolverA2 {
     public static double fixSpeed;
     public static double maxFixSpeed;
     public static double landSpeed;
+    public static int djsplan;
+    public static int jsplan;
     
     public static double tempBM;
     public static double tempV0;
@@ -98,7 +100,7 @@ public class BmSolverA2 {
         inputPanel.add(lengthField);
 
         // 结果面板
-        resultArea = new JTextArea(5, 30);
+        resultArea = new JTextArea(6, 30);
         resultArea.setEditable(false);
         JScrollPane resultScroll = new JScrollPane(resultArea);
 
@@ -623,11 +625,35 @@ public class BmSolverA2 {
             distance = d1;
             pb = prepb;
         }
+        String rOrJ;
+        if (justJump == 0) {
+            rOrJ = "推荐使用后跳，凑出 "+(s0>(delayedG?DeBwSpeed:BwSpeed)?s0:(delayedG?DeBwSpeed:BwSpeed))+" 的向后速度";
+        }else{
+            rOrJ = "推荐使用后跳，连跳能用满助跑，在连跳开始时，凑出 "+landSpeed+" 的落地速度";
+        }
+        String Oplan = "";
 
-        String rOrJ = "推荐使用后跳";
+        int tempplan = (delayedG?djsplan:jsplan);
+        switch (tempplan) {
+            case 1:
+                Oplan = "注意移动阻断，碰到移动阻断时请刚好慢于它";
+                break;
+            case 2:
+                Oplan = "注意移动阻断，碰到移动阻断时请刚好在它的下限，通过阻断时可能需减速以不超出助跑";
+                break;
+            case 3:
+                Oplan = "注意移动阻断，碰到移动阻断时请刚好快于它，通过阻断时需减速以不超出助跑";
+                break;
+            default:
+                break;
+        }
+
+
+        // System.out.println(s0);
+        // System.out.println((delayedG?DeBwSpeed:BwSpeed));
+        int rplans = 0;
         // 比较后跳与跑跳之间的距离
         if (distance < rd0 || distance < rdd0) {
-            rOrJ = "推荐使用跑跳";
             // //System.out.println(rd0+" instant jump");
             // //System.out.println(rdd0+" delayed jump");
             if (rd0>rdd0) {
@@ -638,6 +664,7 @@ public class BmSolverA2 {
                 delayedG = false;
                 landSpeed = rs0;
                 finalv0 = rjs0;
+                rplans = runType;
             }else{
                 distance = rdd0;
                 pb = rdpb;
@@ -646,11 +673,14 @@ public class BmSolverA2 {
                 delayedG = true;
                 landSpeed = rds0;
                 finalv0 = rdjs0;
+                rplans = rrunType;
             }
+            rOrJ = "推荐使用跑跳";
+            Oplan = "";
         }
         
         String rr = delayedG?"起跳时跑1t":"起跳时无需跑1t";
-        String[] res = {"容错: "+pb,"跳跃距离: "+distance,rOrJ,rr};
+        String[] res = {"容错: "+pb,"跳跃距离: "+distance,rOrJ,rr,Oplan};
         
 
 
@@ -752,6 +782,7 @@ public class BmSolverA2 {
         }
 
         //System.out.println(tempBM +" finbm  "+tempV0+" tempv0 "+js+" js" + " plan: "+ plan);
+        jsplan = plan;
         return tempV0;
     }
 
@@ -852,6 +883,7 @@ public class BmSolverA2 {
         }
         //System.out.println("now s0: "+s0);
         //System.out.println("run: "+tempBM +" finbm  "+tempV0+" tempv0 "+js+" js" + " plan: "+ plan);
+        djsplan = plan;
         return tempV0;
     }
 
