@@ -243,7 +243,6 @@ if (blockFixContext.fixPlan == 2 && blockFixContext.planSteps == 2 &&
 
 - **支持所有阻断情况**：Plan 3对地面阻断和空中阻断都会尝试
 - **条件检查**：Plan 3需要满足条件检查（expectedJumpSpeed >= jumpSpeed），确保起跳速度不超过MC物理引擎允许的最大值
-- **程序设计原则**：程序应该处理所有可能的助跑情况，只要有可能就需要考虑
 
 ### 代码实现
 
@@ -570,5 +569,6 @@ Plan 5实际上没有特殊的处理逻辑，只是使用阻断下限作为向�
    - **条件检查的含义**：防止起跳速度超过MC物理引擎允许的最大值
    - **适用性**：当为了适配助跑而调小起跳速度时，expectedJumpSpeed可能较小，Plan 3计算出的jumpSpeed可能不会超过expectedJumpSpeed，就有机会应用Plan 3
 5. **Plan 4/5的特殊性**：仅在阶段1使用，处理向后速度的阻断问题
+
 
 
