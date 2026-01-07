@@ -8,7 +8,6 @@
  * - Type 2：45.006度（更优有效角，sin=0.7071746, cos=0.707039）
  * - Type 3：原版小半角（sin=0.70710677, cos=0.7071746）
  * - Type 4：原版大半角（sin=0.70710677, cos=0.7114322）
- * - Type 5：其他特殊角度（sin=0.8310432, cos=0.70764905）
  * 
  * 计算参数：
  * - runEqualV0：跑1t后速度不变的临界速度
@@ -58,10 +57,6 @@ public class AngleConfig {
                 sin = 0.70710677f;
                 cos = 0.7114322f;
                 break;
-            case 5: // 其他特殊角度
-                sin = 0.8310432f;
-                cos = 0.70764905f;
-                break;
             default:
                 break;
         }
@@ -90,4 +85,5 @@ public class AngleConfig {
         }
     }
 }
+
 
