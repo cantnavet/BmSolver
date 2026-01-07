@@ -1,6 +1,33 @@
 /**
  * 移动阻断处理类
- * 处理MC中的移动阻断机制，提供三种修复方案
+ * 
+ * 这个类处理Minecraft中的移动阻断机制。
+ * 
+ * 移动阻断机制：
+ * - MC中，当速度在很小的范围内时，会被重置为0
+ * - 地面阻断阈值：±0.009157508093840406（= 0.005 / 0.546）
+ * - 空中阻断阈值：±0.005494505（= 0.005 / 0.91）
+ * - 这会导致计算出的速度无法使用，需要特殊处理
+ * 
+ * 三种修复方案：
+ * 
+ * Plan 1：刚好慢于移动阻断
+ * - 策略：使用刚好低于阻断阈值的速度作为起跳速度
+ * - 原理：过阻断后全力前进，获得最大速度
+ * 
+ * Plan 2：刚好卡在阻断下限，调整过阻断后的速度
+ * - 策略：使用阻断下限作为起跳速度，然后调整过阻断后的速度
+ * - 原理：通过调整过阻断后的速度来达到目标bm
+ * 
+ * Plan 3：刚好快于移动阻断
+ * - 策略：使用刚好高于阻断阈值的速度作为起跳速度
+ * - 原理：过阻断后调整速度来达到目标bm
+ * 
+ * 处理流程：
+ * 1. 检测到阻断（inPlace > 0）
+ * 2. 依次尝试三种方案
+ * 3. 比较三种方案的结果，选择最优的（最终速度最大的）
+ * 4. 返回最优方案的最终速度
  */
 public class BlockFixHandler {
     private final PhysicsCalculator physicsCalculator;
@@ -49,13 +76,11 @@ public class BlockFixHandler {
         }
         
         // Plan 3: 刚好快于移动阻断，调整过阻断后的速度
-        if (context.inPlace == 1) {
-            // 地面阻断，检查Plan 3
-            double plan3V0 = tryPlan3(targetBM, initialSpeed, finalDelayed);
-            if (plan3V0 > maxV0) {
-                maxV0 = plan3V0;
-                bestPlan = 3;
-            }
+        // 对所有阻断（地面和空中）都尝试Plan 3
+        double plan3V0 = tryPlan3(targetBM, initialSpeed, finalDelayed);
+        if (plan3V0 > maxV0) {
+            maxV0 = plan3V0;
+            bestPlan = 3;
         }
         
         // 重置状态
@@ -173,6 +198,10 @@ public class BlockFixHandler {
         physicsCalculator.calculateDelayedJumpJumps(initialSpeed, jumpSpeed, finalDelayed);
         
         // 检查是否满足条件
+        // expectedJumpSpeed是MC物理引擎允许的最大起跳速度（从initialSpeed正常计算出的）
+        // 这个条件检查是为了防止起跳速度因为需要超过移动阻断阈值，而在插值后强行超越了MC中的最大起跳速度
+        // 如果修正前的策略中为了适配助跑而调小了起跳速度（expectedJumpSpeed较小），
+        // 那么Plan 3计算出的jumpSpeed（刚好高于阻断阈值）可能不会超过expectedJumpSpeed，就有机会应用这个Plan
         double expectedJumpSpeed = initialSpeed * MinecraftPhysicsConstants.FRICTION_GROUND + 
                                   MinecraftPhysicsConstants.JUMP_BOOST + 
                                   MinecraftPhysicsConstants.GROUND_MOVEMENT;
@@ -180,9 +209,9 @@ public class BlockFixHandler {
         System.out.println("p3v0 " + physicsCalculator.tempV0 + "  fixsp " + context.fixSpeed);
         
         if (expectedJumpSpeed >= jumpSpeed) {
-            return physicsCalculator.tempV0;
+            return physicsCalculator.tempV0;  // 满足条件，Plan 3可行
         }
-        return 0.0;
+        return 0.0;  // 不满足条件，Plan 3不可行（起跳速度超过了MC允许的最大值）
     }
 }
 
