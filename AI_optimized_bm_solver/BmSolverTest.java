@@ -70,10 +70,11 @@ public class BmSolverTest {
     }
     
     /**
-     * 对比两个结果是否一致（允许小的浮点误差）
+     * 对比两个结果是否一致
      */
     private static boolean compareResults(double value1, double value2, double epsilon) {
         return Math.abs(value1 - value2) < epsilon;
     }
 }
+
 
