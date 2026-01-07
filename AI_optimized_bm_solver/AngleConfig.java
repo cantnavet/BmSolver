@@ -35,7 +35,7 @@ public class AngleConfig {
                 sin = 0.70710677f;
                 cos = 0.7114322f;
                 break;
-            case 5: // 其他特殊角度
+            case 5: // optifine大半角
                 sin = 0.8310432f;
                 cos = 0.70764905f;
                 break;
@@ -67,4 +67,5 @@ public class AngleConfig {
         }
     }
 }
+
 
