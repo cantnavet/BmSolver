@@ -28,6 +28,8 @@ import java.util.Arrays;
  * 
  * 保持与原版完全一致的逻辑，但提高了可读性和结构
  */
+
+//p.s. 上面的步骤可能不完全正确，但大致是这样的
 public class BmSolverOptimized {
     // 配置
     private final AngleConfig angleConfig;
@@ -673,4 +675,5 @@ public class BmSolverOptimized {
         System.out.println("PB: " + solver.pb);
     }
 }
+
 
