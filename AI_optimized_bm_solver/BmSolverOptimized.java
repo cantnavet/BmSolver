@@ -29,7 +29,7 @@ import java.util.Arrays;
  * 保持与原版完全一致的逻辑，但提高了可读性和结构
  */
 
-//p.s. 上面的步骤可能不完全正确，例如处理如2.1875bm4+0.5的跑跳方式应该是一个单独的阶段，但大致是这样的
+//p.s. 上面的步骤可能不完全正确，例如处理如2.1875bm4+0.5的跑跳方式应该是一个单独的阶段（虽然我原本代码里确实和确定连跳次数的部分混到一起了（）），但大致是这样的
 public class BmSolverOptimized {
     // 配置
     private final AngleConfig angleConfig;
@@ -675,6 +675,7 @@ public class BmSolverOptimized {
         System.out.println("PB: " + solver.pb);
     }
 }
+
 
 
 
